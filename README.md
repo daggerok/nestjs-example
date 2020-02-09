@@ -225,8 +225,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class MaksimkoService {
-  wtf(): string {
-    return 'O.o';
+  wtf(what: string): string {
+    return `O.o ${what}?`;
   }
 }
 ```
@@ -234,7 +234,7 @@ export class MaksimkoService {
 _controller_
 
 ```typescript
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Param, Post } from '@nestjs/common';
 import { MaksimkoService } from './maksimko.service';
 
 @Controller('maksimko')
@@ -242,9 +242,9 @@ export class MaksimkoController {
 
   constructor(private maksimkoService: MaksimkoService) {}
 
-  @Post('/wtf') // -> POST /maksimko/wtf
-  wtf(): string {
-    return this.maksimkoService.wtf();
+  @Post('/wtf/:what')
+  async wtf(@Param('what') what: string): Promise<string> {
+    return this.maksimkoService.wtf(what);
   }
 }
 ```
