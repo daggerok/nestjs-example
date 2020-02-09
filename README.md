@@ -355,3 +355,4 @@ Nest is [MIT licensed](LICENSE).
 
 * [Official documentation](https://docs.nestjs.com/)
 * [project GitHub repo: nestjs/nest](https://github.com/nestjs/nest)
+* [YouTube: NestJS For Absolute Beginners](youtube.com/watch?v=4RkMAt8-u8g)
