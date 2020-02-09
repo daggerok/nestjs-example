@@ -31,13 +31,16 @@ jobs:
           node -v
           npm -v
           npm i -E
-      - name: Setup scripts and stop in anything is listenning 3000 port
+      - name: Setup helper scripts and stop anything is listenning 3000 port
         run: |
           source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+          stop_any 3000
+      - name: run nest server and wait its up and running...
+        run: |
           npm run pm2
           npm run logs &
-      - name: Wait for server up and running
-        run: wait_for 3000
+          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+          wait_for 3000
       - name: Run CI tests
         run: |
           http get :3000/
@@ -46,4 +49,5 @@ jobs:
       - name: Tear down...
         run: |
           npm stop
+          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
           stop_any 3000
