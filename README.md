@@ -1,6 +1,8 @@
 # nestjs-example
 Finally JavaScript has something useful for backend development...
 
+let's quickly guide its basics....
+
 ## create default boilerplate
 
 ```bash
@@ -13,7 +15,7 @@ npm start
 
 ### starting point
 
-_main.ts_
+_src/main.ts_
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -27,6 +29,8 @@ bootstrap();
 ```
 
 ### nest app module
+
+_src/app.module.ts_
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -43,17 +47,17 @@ export class AppModule {}
 
 ### controller
 
-_app.controller.ts_
+_src/app.controller.ts_
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 
-@Controller()
+@Controller() // http://127.0.0.1:3000/**
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
+  @Get() // -> GET /
   getHello(): string {
     return this.appService.getHello();
   }
@@ -64,7 +68,7 @@ export class AppController {
 
 this service will be injected in controller via constructor (see above)
 
-_app.service.ts_
+_src/app.service.ts_
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -77,7 +81,7 @@ export class AppService {
 }
 ```
 
-## test
+## testing
 
 as we can see, how we have only one endpoint: `GET /` which should hello:
 
@@ -97,6 +101,172 @@ ETag: W/"c-Lve95gjOVATpfV8EL5X4nxwjKHE"
 X-Powered-By: Express
 
 Hello World!
+```
+
+## implement a feature
+
+if you familiar with ng cli (@angular/cli from Angular framework) it would be very similar!
+
+### new module
+
+let's implement Maksimko's module:
+
+```bash
+npx @nestjs/cli generate module maksimko
+#CREATE /src/maksimko/maksimko.module.ts (85 bytes)
+#UPDATE /src/app.module.ts (324 bytes)
+```
+
+verify main module has been updated:
+
+_src/app.module.ts_
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { MaksimkoModule } from './maksimko/maksimko.module';
+
+@Module({
+  imports: [MaksimkoModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+as you can see, now imports array is not empty and contains created `MaksimkoModule`:
+
+_src/maksimko/maksimko.module.ts_
+
+```typescript
+import { Module } from '@nestjs/common';
+
+@Module({})
+export class MaksimkoModule {}
+```
+
+### new controller
+
+similarly, let's generate new controller
+
+```bash
+npx @nestjs/cli generate controller maksimko
+#CREATE /src/maksimko/maksimko.controller.spec.ts (507 bytes)
+#CREATE /src/maksimko/maksimko.controller.ts (105 bytes)
+#UPDATE /src/maksimko/maksimko.module.ts (182 bytes)
+```
+
+now maksimko module should be updated:
+
+_src/maksimko/maksimko.module.ts_
+
+```typescript
+import { Module } from '@nestjs/common';
+import { MaksimkoController } from './maksimko.controller';
+
+@Module({
+  controllers: [MaksimkoController]
+})
+export class MaksimkoModule {}
+```
+
+and new controller created:
+
+_src/maksimko/maksimko.controller.ts_
+
+```typescript
+import { Controller } from '@nestjs/common';
+
+@Controller('maksimko') // http://127.0.0.21:3000/maksimko/**
+export class MaksimkoController {}
+```
+
+### new service
+
+finally let's similarly create new service:
+
+```bash
+npx @nestjs/cli generate service maksimko
+#CREATE /src/maksimko/maksimko.service.spec.ts (474 bytes)
+#CREATE /src/maksimko/maksimko.service.ts (92 bytes)
+#UPDATE /src/maksimko/maksimko.module.ts (268 bytes)
+```
+
+_src/maksimko/maksimko.module.ts_
+
+```typescript
+import { Module } from '@nestjs/common';
+import { MaksimkoController } from './maksimko.controller';
+import { MaksimkoService } from './maksimko.service';
+
+@Module({
+  controllers: [MaksimkoController],
+  providers: [MaksimkoService]
+})
+export class MaksimkoModule {}
+```
+
+_src/maksimko/maksimko.service.ts_
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class MaksimkoService {}
+```
+
+### implementation
+
+_service_
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class MaksimkoService {
+  wtf(): string {
+    return 'O.o';
+  }
+}
+```
+
+_controller_
+
+```typescript
+import { Controller, Post } from '@nestjs/common';
+import { MaksimkoService } from './maksimko.service';
+
+@Controller('maksimko')
+export class MaksimkoController {
+
+  constructor(private maksimkoService: MaksimkoService) {}
+
+  @Post('/wtf') // -> POST /maksimko/wtf
+  wtf(): string {
+    return this.maksimkoService.wtf();
+  }
+}
+```
+
+### testing
+
+```bash
+http post :3000/maksimko/wtf
+```
+
+output:
+
+```http
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 3
+Content-Type: text/html; charset=utf-8
+Date: Sun, 09 Feb 2020 13:49:26 GMT
+ETag: W/"3-8NDaRTE2bjPAxaWSq3pLw2F5gjg"
+X-Powered-By: Express
+
+O.o
 ```
 
 ## default README.md
@@ -175,4 +345,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## License
 
-  Nest is [MIT licensed](LICENSE).
+Nest is [MIT licensed](LICENSE).
+
+## resoiurces
+
+TODO
