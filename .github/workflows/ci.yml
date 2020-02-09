@@ -1,4 +1,4 @@
-name: Node.js / Python 3 pip GitHub workflow Actions
+name: CI
 on: [push]
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install --upgrade httpie
-      - name: Prepare to CI testing
+      - name: Install npm packages
         run: |
           pip -V
           python -V
@@ -31,16 +31,12 @@ jobs:
           node -v
           npm -v
           npm i -E
-      - name: Setup helper scripts and stop anything is listenning 3000 port
-        run: |
-          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-          stop_any 3000
+          npm install -g wait-port
       - name: run nest server and wait its up and running...
         run: |
           npm run pm2
           npm run logs &
-          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-          wait_for 3000
+          wait-port 3000
       - name: Run CI tests
         run: |
           http get :3000/
@@ -49,5 +45,3 @@ jobs:
       - name: Tear down...
         run: |
           npm stop
-          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-          stop_any 3000
