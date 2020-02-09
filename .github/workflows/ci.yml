@@ -19,23 +19,31 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install / upgrade pip and HTTPie
         run: |
           python -m pip install --upgrade pip setuptools
           pip install --upgrade httpie
-      - name: Run CI tests
+      - name: Prepare to CI testing
         run: |
-          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
           pip -V
           python -V
-          http -V
+          http --version
           node -v
           npm -v
           npm i -E
+      - name: Setup scripts and stop in anything is listenning 3000 port
+        run: |
+          source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
           npm run pm2
           npm run logs &
-          wait_for 3000
+      - name: Wait for server up and running
+        run: wait_for 3000
+      - name: Run CI tests
+        run: |
           http get :3000/
           http post :3000/maksimko/wtf/ololo
           http post :3000/maksimko/wtf/trololo
+      - name: Tear down...
+        run: |
           npm stop
+          stop_any 3000
