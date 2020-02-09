@@ -1,4 +1,4 @@
-name: Node.js + Python 3 pip GitHub workflow Actions
+name: Node.js / Python 3 pip GitHub workflow Actions
 on: [push]
 jobs:
   build:
@@ -8,6 +8,7 @@ jobs:
         nodejs-version: [12]
         python-version: [3.8]
     runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} OS, python ${{ matrix.python-version }}, NodeJS ${{ matrix.nodejs-version }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up NodeJS ${{ matrix.nodejs-version }}
@@ -28,7 +29,7 @@ jobs:
           npm run pm2
           npm run logs &
           wait_for 3000
-          http :3000
+          http get :3000/
           http post :3000/maksimko/wtf/ololo
           http post :3000/maksimko/wtf/trololo
           npm stop
